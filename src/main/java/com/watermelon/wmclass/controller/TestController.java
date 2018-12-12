@@ -1,0 +1,28 @@
+package com.watermelon.wmclass.controller;
+
+import com.watermelon.wmclass.config.WeChatConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @Description:
+ * @Author; Watermelon
+ * @Date: 2018/12/11 17:16
+ */
+@RestController
+public class TestController {
+
+    @GetMapping(value = "test")
+    public String test() {
+        return "hello 123";
+    }
+
+    @Autowired
+    private WeChatConfig weChatConfig;
+
+    @GetMapping(value = "test_config")
+    public String testConfig() {
+        return weChatConfig.getAppId();
+    }
+}
