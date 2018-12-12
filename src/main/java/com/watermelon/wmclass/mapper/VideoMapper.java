@@ -1,6 +1,7 @@
 package com.watermelon.wmclass.mapper;
 
 import com.watermelon.wmclass.domain.Video;
+import com.watermelon.wmclass.provider.VideoProvider;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public interface VideoMapper {
     @Select("SELECT * FROM video WHERE id = #{id}")
     Video findById(int id);
 
-    @Update("UPDATE video SET title = #{title} WHERE id = #{id}")
+    //@Update("UPDATE video SET title = #{title} WHERE id = #{id}")
+    @UpdateProvider(type = VideoProvider.class, method = "updateVideo")
     int update(Video video);
 
     @Delete("DELETE FROM video WHERE id = #{id}")

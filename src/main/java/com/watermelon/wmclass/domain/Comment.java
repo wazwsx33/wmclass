@@ -13,7 +13,7 @@ public class Comment implements Serializable {
   private Integer userId;
   private String headImg;
   private String name;
-  private double point;
+  private Double point;
   private Integer up;
   private java.sql.Timestamp createTime;
   private Integer orderId;
@@ -65,14 +65,13 @@ public class Comment implements Serializable {
   }
 
 
-  public double getPoint() {
+  public Double getPoint() {
     return point;
   }
 
-  public void setPoint(double point) {
+  public void setPoint(Double point) {
     this.point = point;
   }
-
 
   public Integer getUp() {
     return up;
