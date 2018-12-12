@@ -1,11 +1,18 @@
 package com.watermelon.wmclass.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.watermelon.wmclass.domain.Video;
 import com.watermelon.wmclass.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: video 接口
@@ -30,7 +37,16 @@ public class VideoController {
     public Object pageVideo(@RequestParam(value = "page", defaultValue = "1") int page,
                             @RequestParam(value = "size", defaultValue = "10") int size) {
 
-        return videoService.findAll();
+        PageHelper.startPage(page, size);
+        List<Video> list = videoService.findAll();
+        PageInfo<Video> pageInfo = new PageInfo<>(list);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("total_size", pageInfo.getTotal());  //总条数
+        data.put("total_page", pageInfo.getPages());  //总页数
+        data.put("current_page", page);  //当前页
+        data.put("data", pageInfo.getList());  //数据
+        return data;
     }
 
     /**
