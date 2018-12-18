@@ -1,6 +1,7 @@
 package com.watermelon.wmclass.controller;
 
 import com.watermelon.wmclass.config.WeChatConfig;
+import com.watermelon.wmclass.domain.JsonData;
 import com.watermelon.wmclass.mapper.VideoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,8 @@ public class TestController {
     private WeChatConfig weChatConfig;
 
     @GetMapping(value = "test_config")
-    public String testConfig() {
-        return weChatConfig.getAppId();
+    public JsonData testConfig() {
+        return JsonData.buildSuccess(weChatConfig.getAppId());
     }
 
     @Autowired

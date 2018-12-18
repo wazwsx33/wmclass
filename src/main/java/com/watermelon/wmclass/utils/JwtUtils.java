@@ -14,10 +14,10 @@ import java.util.Date;
  */
 public class JwtUtils {
 
-    public static final String SUBJECT = "wmclass";
-    public static final long EXPIRE = 1000 * 60 * 60 * 24 * 7;  //过期时间为一周
+    private static final String SUBJECT = "wmclass";
+    private static final long EXPIRE = 1000 * 60 * 60 * 24 * 7;  //过期时间为一周
     //密钥
-    public static final String APPSECRET = "wm666";
+    private static final String APPSECRET = "wm666";
 
     /**
      * 生成JWT
@@ -30,7 +30,7 @@ public class JwtUtils {
                 || user.getHeadImg() == null)
             return null;
 
-        String token = Jwts.builder().setSubject(SUBJECT)
+        return Jwts.builder().setSubject(SUBJECT)
                 .claim("id", user.getId())
                 .claim("name", user.getName())
                 .claim("img", user.getHeadImg())
@@ -38,8 +38,6 @@ public class JwtUtils {
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE))
                 .signWith(SignatureAlgorithm.HS256, APPSECRET)
                 .compact();
-
-        return token;
     }
 
     /**
@@ -50,12 +48,11 @@ public class JwtUtils {
     public static Claims checkJWT(String token) {
 
         try {
-            final Claims claims = Jwts.parser().setSigningKey(APPSECRET)
+
+            return Jwts.parser().setSigningKey(APPSECRET)
                     .parseClaimsJws(token)
                     .getBody();
-
-            return claims;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 
