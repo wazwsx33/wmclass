@@ -48,6 +48,24 @@ public class WeChatConfig {
      */
     private static final String OPEN_QRCODE_URL = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect";
 
+    /**
+     * 微信开放平台获取access_token地址
+     */
+    private static final String OPEN_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
+
+    /**
+     * 获取用户信息url
+     */
+    private static final String OPEN_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
+
+    public static String getOpenUserInfoUrl() {
+        return OPEN_USER_INFO_URL;
+    }
+
+    public static String getOpenAccessTokenUrl() {
+        return OPEN_ACCESS_TOKEN_URL;
+    }
+
     public static String getOpenQrcodeUrl() {
         return OPEN_QRCODE_URL;
     }

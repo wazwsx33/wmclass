@@ -15,7 +15,7 @@ public class Comment implements Serializable {
   private String name;
   private Double point;
   private Integer up;
-  private java.sql.Timestamp createTime;
+  private java.util.Date createTime;
   private Integer orderId;
   private Integer videoId;
 
@@ -82,11 +82,11 @@ public class Comment implements Serializable {
   }
 
 
-  public java.sql.Timestamp getCreateTime() {
+  public java.util.Date getCreateTime() {
     return createTime;
   }
 
-  public void setCreateTime(java.sql.Timestamp createTime) {
+  public void setCreateTime(java.util.Date createTime) {
     this.createTime = createTime;
   }
 
