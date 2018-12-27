@@ -4,6 +4,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -13,7 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * @Description: 微信支付工具类，xml转map，map转xml，生成签名，校验签名
@@ -30,10 +34,12 @@ public class WXPayUtil {
      * @throws Exception
      */
     public static String mapToXml(Map<String, String> data) throws Exception {
-        org.w3c.dom.Document document = WXPayXmlUtil.newDocument();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder= documentBuilderFactory.newDocumentBuilder();
+        org.w3c.dom.Document document = documentBuilder.newDocument();
         org.w3c.dom.Element root = document.createElement("xml");
         document.appendChild(root);
-        for (String key : data.keySet()) {
+        for (String key: data.keySet()) {
             String value = data.get(key);
             if (value == null) {
                 value = "";
@@ -54,7 +60,8 @@ public class WXPayUtil {
         String output = writer.getBuffer().toString(); //.replaceAll("\n|\r", "");
         try {
             writer.close();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
         }
         return output;
     }
@@ -68,8 +75,9 @@ public class WXPayUtil {
      */
     public static Map<String, String> xmlToMap(String strXML) throws Exception {
         try {
-            Map<String, String> data = new HashMap<>();
-            DocumentBuilder documentBuilder = WXPayXmlUtil.newDocumentBuilder();
+            Map<String, String> data = new HashMap<String, String>();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             InputStream stream = new ByteArrayInputStream(strXML.getBytes(StandardCharsets.UTF_8));
             org.w3c.dom.Document doc = documentBuilder.parse(stream);
             doc.getDocumentElement().normalize();
@@ -98,18 +106,16 @@ public class WXPayUtil {
      *
      * @return
      */
-    public static String createSign(SortedMap<String, String> params, String key) {
-
+    public static String createSign(SortedMap<String, String> params, String key){
         StringBuilder sb = new StringBuilder();
-        Set<Map.Entry<String, String>> es = params.entrySet();
+        Set<Map.Entry<String, String>> es =  params.entrySet();
 
-        //生成stringA="appid=wxd930ea5d5a258f4f&body=test&device_info=1000&mch_id=10000100&nonce_str=ibuaiVcKdpRxkhJA";
+        //生成 stringA="appid=wxd930ea5d5a258f4f&body=test&device_info=1000&mch_id=10000100&nonce_str=ibuaiVcKdpRxkhJA";
         for (Map.Entry<String, String> entry : es) {
             String k = entry.getKey();
             String v = entry.getValue();
-
-            if (v != null && !"".equals(v) && !"sign".equals(k) && !"key".equals(k)) {
-                sb.append(k + "=" + v + "&");
+            if (null != v && !"".equals(v) && !"sign".equals(k) && !"key".equals(k)) {
+                sb.append(k).append("=").append(v).append("&");
             }
         }
 
