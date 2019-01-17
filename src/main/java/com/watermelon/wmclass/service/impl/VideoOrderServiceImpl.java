@@ -10,11 +10,13 @@ import com.watermelon.wmclass.mapper.VideoMapper;
 import com.watermelon.wmclass.mapper.VideoOrderMapper;
 import com.watermelon.wmclass.service.VideoOrderService;
 import com.watermelon.wmclass.utils.CommonUtils;
+import com.watermelon.wmclass.utils.HttpUtils;
 import com.watermelon.wmclass.utils.WXPayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -36,7 +38,7 @@ public class VideoOrderServiceImpl implements VideoOrderService {
     private UserMapper userMapper;
 
     @Override
-    public VideoOrder save(VideoOrderDto videoOrderDto) throws Exception {
+    public String save(VideoOrderDto videoOrderDto) throws Exception {
         //查找视频信息
         Video video = videoMapper.findById(videoOrderDto.getVideoId());
         //查找用户信息
@@ -61,13 +63,10 @@ public class VideoOrderServiceImpl implements VideoOrderService {
 
         videoOrderMapper.insert(videoOrder);
 
-        unifiedOrder(videoOrder);
         //获取codeurl
+        String codeUrl = unifiedOrder(videoOrder);
 
-        //生成二维码
-
-
-        return null;
+        return codeUrl;
     }
 
     /**
@@ -98,6 +97,15 @@ public class VideoOrderServiceImpl implements VideoOrderService {
 
         System.out.println(payXml);
         //统一下单
-        return "";
+        String orderStr = HttpUtils.doPost(WeChatConfig.getUnifiedOrderUrl(), payXml,4000);
+        if (orderStr == null)
+            return null;
+
+        Map<String, String> unifiedOrderMap = WXPayUtil.xmlToMap(orderStr);
+        System.out.println(unifiedOrderMap.toString());
+
+        if(unifiedOrderMap != null)
+            return unifiedOrderMap.get("code_url");
+        return null;
     }
 }
