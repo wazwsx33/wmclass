@@ -5,6 +5,7 @@ import com.watermelon.wmclass.domain.JsonData;
 import com.watermelon.wmclass.domain.User;
 import com.watermelon.wmclass.service.UserService;
 import com.watermelon.wmclass.utils.JwtUtils;
+import com.watermelon.wmclass.utils.WXPayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * @Description:
@@ -68,5 +72,31 @@ public class WechatController {
             String url = state + "?token=" + token + "&head_img=" + user.getHeadImg() + "&name=" + URLEncoder.encode(user.getName(), "UTF-8");
             response.sendRedirect(url);
         }
+    }
+
+    /**
+     * 微信支付回调
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "order/callback")
+    //回调时使用的是post方式
+    public void orderCallback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        InputStream inputStream = request.getInputStream();
+
+        //BufferedReader是包装设计模式，性能更高
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        StringBuffer sb = new StringBuffer();
+        String line;
+        while ((line = bufferedReader.readLine()) != null){
+            sb.append(line);
+        }
+        bufferedReader.close();
+        inputStream.close();
+
+        Map<String ,String> callbackMap = WXPayUtil.xmlToMap(sb.toString());
+        System.out.println(callbackMap.toString());
+
     }
 }
