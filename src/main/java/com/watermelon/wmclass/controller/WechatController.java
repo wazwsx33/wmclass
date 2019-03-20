@@ -3,7 +3,9 @@ package com.watermelon.wmclass.controller;
 import com.watermelon.wmclass.config.WeChatConfig;
 import com.watermelon.wmclass.domain.JsonData;
 import com.watermelon.wmclass.domain.User;
+import com.watermelon.wmclass.domain.VideoOrder;
 import com.watermelon.wmclass.service.UserService;
+import com.watermelon.wmclass.service.VideoOrderService;
 import com.watermelon.wmclass.utils.JwtUtils;
 import com.watermelon.wmclass.utils.WXPayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * @Description:
@@ -35,6 +39,8 @@ public class WechatController {
     private WeChatConfig weChatConfig;
     @Autowired
     private UserService userService;
+    @Autowired
+    private VideoOrderService videoOrderService;
 
     /**
      * 拼装微信扫一扫登录url
@@ -75,7 +81,7 @@ public class WechatController {
     }
 
     /**
-     * 微信支付回调
+     * 微信支付回调，微信支付模式二，第十步
      * @param request
      * @param response
      * @throws Exception
@@ -97,6 +103,37 @@ public class WechatController {
 
         Map<String ,String> callbackMap = WXPayUtil.xmlToMap(sb.toString());
         System.out.println(callbackMap.toString());
+
+        SortedMap<String, String> sortedMap = WXPayUtil.getSortedMap(callbackMap);
+
+        //判断签名是否正确
+        if (WXPayUtil.isCorrectSign(sortedMap, weChatConfig.getKey())){
+            //判断微信的状态码
+            if ("SUCCESS".equals(sortedMap.get("result_code"))){
+
+                String outTradeNo = sortedMap.get("out_trade_no");
+
+                VideoOrder dbVideoOrder = videoOrderService.findByOutTradeNo(outTradeNo);
+
+                if (dbVideoOrder != null && dbVideoOrder.getState() == 0){  //判断逻辑看业务场景
+                    VideoOrder videoOrder = new VideoOrder();
+                    videoOrder.setOpenid(sortedMap.get("openid"));  //用户在商户下的唯一标识
+                    videoOrder.setOutTradeNo(outTradeNo);
+                    videoOrder.setNotifyTime(new Date());
+                    videoOrder.setState(1);
+                    int rows = videoOrderService.updateVideoOrderByOutTradeNo(videoOrder);
+                    if (rows == 1) {  //需要通知微信，订单处理成功
+                        response.setContentType("text/xml");
+                        response.getWriter().println("success");
+                        return ;
+                    }
+                }
+            }
+
+        }
+        //都处理失败
+        response.setContentType("text/xml");
+        response.getWriter().println("fail");
 
     }
 }

@@ -108,4 +108,15 @@ public class VideoOrderServiceImpl implements VideoOrderService {
             return unifiedOrderMap.get("code_url");
         return null;
     }
+
+    @Override
+    public VideoOrder findByOutTradeNo(String outTradeNo) {
+
+        return videoOrderMapper.findByOutTradeNo(outTradeNo);
+    }
+
+    @Override
+    public int updateVideoOrderByOutTradeNo(VideoOrder videoOrder) {
+        return videoOrderMapper.updateVideoOrderByOutTradeNo(videoOrder);
+    }
 }

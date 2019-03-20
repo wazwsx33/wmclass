@@ -14,10 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
+import java.util.*;
 
 /**
  * @Description: 微信支付工具类，xml转map，map转xml，生成签名，校验签名
@@ -136,5 +133,25 @@ public class WXPayUtil {
 
         String weixinPaySign = params.get("sign").toUpperCase();
         return weixinPaySign.equals(sign);
+    }
+
+    /**
+     * 获取有序map
+     * @param map
+     * @return
+     */
+    public static SortedMap<String, String> getSortedMap(Map<String, String> map) {
+
+        SortedMap<String, String> sortedMap = new TreeMap<>();
+        for (String key : map.keySet()) {
+            String value = map.get(key);
+
+            String temp = "";
+            if (null != value) {
+                temp = value.trim();
+            }
+            sortedMap.put(key, temp);
+        }
+        return sortedMap;
     }
 }
