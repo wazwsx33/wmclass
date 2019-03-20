@@ -14,6 +14,8 @@ import com.watermelon.wmclass.utils.HttpUtils;
 import com.watermelon.wmclass.utils.WXPayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class VideoOrderServiceImpl implements VideoOrderService {
     private UserMapper userMapper;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public String save(VideoOrderDto videoOrderDto) throws Exception {
         //查找视频信息
         Video video = videoMapper.findById(videoOrderDto.getVideoId());
