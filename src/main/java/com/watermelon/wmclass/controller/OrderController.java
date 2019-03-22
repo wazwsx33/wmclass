@@ -7,10 +7,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.watermelon.wmclass.domain.JsonData;
 import com.watermelon.wmclass.dto.VideoOrderDto;
 import com.watermelon.wmclass.service.VideoOrderService;
-import com.watermelon.wmclass.utils.IpUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +33,9 @@ import java.util.Map;
 /*@RequestMapping(value = "user/api/v1/order")*/
 @RequestMapping(value = "api/v1/order")
 public class OrderController {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger dataLogger = LoggerFactory.getLogger("dataLogger");
 
     @Autowired
     private VideoOrderService videoOrderService;
