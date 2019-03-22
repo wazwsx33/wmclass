@@ -9,6 +9,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.watermelon.wmclass.dto.VideoOrderDto;
 import com.watermelon.wmclass.service.VideoOrderService;
+import com.watermelon.wmclass.utils.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ import java.util.Map;
  * @Date: 2018/12/21 10:46
  */
 @RestController
-/*@RequestMapping(value = "user/api/v1/order")*/
-@RequestMapping(value = "api/v1/order")
+@RequestMapping(value = "user/api/v1/order")
+//@RequestMapping(value = "api/v1/order")
 public class OrderController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -43,10 +44,10 @@ public class OrderController {
     @GetMapping(value = "add")
     public void saveOrder(@RequestParam(value = "video_id", required = true) int videoId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-//        String ip = IpUtils.getIpAddr(request);
-        //int userId = request.getAttribute("user_id");
-        int userId = 4;
-        String ip = "120.41.23.45";
+        String ip = IpUtils.getIpAddr(request);
+        int userId = (int) request.getAttribute("user_id");
+//        int userId = 4;
+//        String ip = "120.41.23.45";
         VideoOrderDto videoOrderDto = new VideoOrderDto();
         videoOrderDto.setUserId(userId);
         videoOrderDto.setVideoId(videoId);
